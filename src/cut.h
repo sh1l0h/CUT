@@ -25,9 +25,10 @@ struct test_result {
 typedef enum test_return_code (*test_fun_t)(struct test_result *__result);
 
 struct test_entry {
+    char *file_name;
     char *name;
     test_fun_t fun;
-};
+} __attribute__((aligned(32)));
 
 extern const struct test_entry CUT_TESTS_START[];
 extern const struct test_entry CUT_TESTS_STOP[];
@@ -38,9 +39,10 @@ extern const struct test_entry CUT_TESTS_STOP[];
 #define CUT_LINE_FILE_STR CUT_TO_STRING(__LINE__)":" __FILE__": "
 
 #define CUT_TEST(_name) \
-    static enum test_return_code cut_test_##_name(struct test_result *__result);                   \
-    static __attribute__((unused, section(CUT_TO_STRING(CUT_TEST_SECTION_NAME))))                  \
-    const struct test_entry cut_test_entry_ ## _name = { .name = #_name, .fun = &cut_test_##_name};\
+    static enum test_return_code cut_test_##_name(struct test_result *__result); \
+    static __attribute__((unused, section(CUT_TO_STRING(CUT_TEST_SECTION_NAME))))\
+    const struct test_entry cut_test_entry_##_name = {.file_name = __FILE__,     \
+        .name = #_name, .fun = &cut_test_##_name};\
     static enum test_return_code cut_test_##_name(struct test_result *__result)
 
 #define CUT_TEST_PASS          \

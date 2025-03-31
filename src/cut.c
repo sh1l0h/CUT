@@ -21,8 +21,8 @@ int main()
         struct test_result result = {};
         enum test_return_code code = entry->fun(&result);
 
-        printf("%s%6lu/%lu: %s\n", return_code_text[code], i + 1,
-               test_count, entry->name);
+        printf("%s%6lu/%lu: %s: %s\n", return_code_text[code], i + 1,
+               test_count, entry->file_name, entry->name);
 
         if (code == TEST_PASS)
             continue;
